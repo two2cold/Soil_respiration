@@ -1,8 +1,10 @@
 clear;
 
-t=[.04 .3 .5 .7 .9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.2 2.4 2.6 2.8 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 9 10 11]; %...
+% t=[.04 .3 .5 .7 .9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.2 2.4 2.6 2.8 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 9 10 11]; %...
 %    12 13 14 15 16 17 18 19 20 21 22 23 24 25 ...
 %    25.1 25.3 25.5 25.7 25.9 26.1 26.3 26.5 26.7 26.9 27.1 27.3 27.5 27.7 28 28.5 29 29.5 30 31 32 33 34 35 36 37 38];
+
+t = [25.1 25.3 25.5 25.7 25.9 26.1 26.3 26.5 26.7 26.9 27.1 27.3 27.5 27.7 28 28.5 29 29.5 30 31 32 33 34 35 36 37 38];
 
 fileNumber=length(t);
 files=cell(1,fileNumber);
@@ -19,7 +21,7 @@ CUE_slow = 0.2;
 
 for n=1:fileNumber
 %     O2(n)=files{n}.data(1,2);
-    CO2(n)=files{n}.data(1,2)*(1-CUE_fast) + files{n}.data(1,3)*(1-CUE_slow) + files{n}.data(1,4)*(1-CUE_slow);%mol/kgH2O/year
+    CO2(n)=files{n}.data(1,2)*(1-CUE_fast);% + files{n}.data(1,3)*(1-CUE_slow) + files{n}.data(1,4)*(1-CUE_slow);%mol/kgH2O/year
 end
 
 x_real=[0 24 48 72 99 123 147 195 267 603 627 651 699 747 819 915];
@@ -55,14 +57,14 @@ end
 % Se(35:48) = 0.1;
 % Se(49:75) = 0.2;
 figure;
-dataUsed = 60;
+dataUsed = 90;
 leg = sprintf('Incubation data for %d%% Se',dataUsed);
 % plot(t(1:fileNumber)*24,CO2_increase*39.68,'-','LineWidth',1); hold on; % converting to gC/m3/hour
 % plot(t(1:fileNumber)*24,CO2*1000*0.64/0.36.*Se*12/4*0.9/365/24,'r-','LineWidth',1);hold on; % converting to gC/m3/hour
 plot(t(1:fileNumber)*24,CO2*1000*0.64/0.36*12/4/365/24,'r-','LineWidth',1);hold on; % converting to gC/m3/hour
-plot(x_real,y_real60,'k^','MarkerSize',10);
-xlim([0 270]);
-% ylim([0 9]);
+plot(x_real,y_real90,'k^','MarkerSize',10);
+xlim([600 920]);
+ylim([0 8]);
 set(gca,'fontsize',22);
 set(gca,'FontName','Times New Roman');
 xlabel('Time (hours)','FontSize',22);

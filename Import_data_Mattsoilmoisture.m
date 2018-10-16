@@ -2,17 +2,18 @@
 clear;
 
 %% Data input
+depth = 130;
 fileNumber=9;
 files=cell(1,fileNumber);
 for n=1:fileNumber
-    filename=sprintf('/Users/yuchenliu/Documents/CrunchTopeDistribute/MattSoilMoisture/gases%d.out',n);
+    filename=sprintf('/Users/yuchenliu/Documents/CrunchTopeDistribute/MattSoilMoisture/GaussNewton/Profile_No_Auto/gases%d.out',n);
     files{n}=importdata(filename,' ',3);
 end
 
-CO2=zeros(150,fileNumber);
+CO2=zeros(depth,fileNumber);
 
 for n=1:fileNumber
-    for m=1:150
+    for m=1:depth
 %        CO2(m,n)=files{n}.data(m,2)+files{n}.data(m,3)+files{n}.data(m,4);%mol/kgH2O/year
         CO2(m,n)=files{n}.data(m,3);%mol/kgH2O/year
     end
@@ -20,23 +21,48 @@ end
 
 t=[1 2 3 4 5 10 15 20 25];
 
+%% Set up a dichotomized method to find the best respiration rate
+% Calculate the integration of the model output and Cerling and Quade output
+lowBoundaryRespirationRate = 0;
+highBoundaryRespirationRate = 100;
+integrateThisModel = sum(CO2(:,9)*1000000);
+timeCount = 0;
+while true
+    integrateMidRespirationRate = sum(CerlingAndQuade(1:130,100,0.05,(lowBoundaryRespirationRate + highBoundaryRespirationRate)/2));
+    if abs(integrateMidRespirationRate - integrateThisModel) <= 0.01
+        bestRespirationRate = (lowBoundaryRespirationRate + highBoundaryRespirationRate)/2;
+        break;
+    end
+    if integrateMidRespirationRate < integrateThisModel
+        lowBoundaryRespirationRate = (lowBoundaryRespirationRate + highBoundaryRespirationRate)/2;
+    else
+        highBoundaryRespirationRate = (lowBoundaryRespirationRate + highBoundaryRespirationRate)/2;
+    end
+end
+disp(bestRespirationRate);
+
 %% Plotting
 hold on;
-plot(CO2(:,1)*1000000,1:150,'--','LineWidth',1);hold on;%converting to ppm
-plot(CO2(:,2)*1000000,1:150,'--','LineWidth',1);
-plot(CO2(:,3)*1000000,1:150,'--','LineWidth',1);
-plot(CO2(:,4)*1000000,1:150,'--','LineWidth',1);
-plot(CO2(:,5)*1000000,1:150,'--','LineWidth',1);
-plot(CO2(:,6)*1000000,1:150,'--','LineWidth',1);
-plot(CO2(:,7)*1000000,1:150,'--','LineWidth',1);
-plot(CO2(:,8)*1000000,1:150,'b-','LineWidth',1);
-plot(CO2(:,9)*1000000,1:150,'r-','LineWidth',1);
-set(gca,'fontsize',14);
+% plot(CO2(:,1)*1000000,1:depth,'--','LineWidth',1);hold on;%converting to ppm
+% plot(CO2(:,2)*1000000,1:depth,'--','LineWidth',1);
+% plot(CO2(:,3)*1000000,1:depth,'--','LineWidth',1);
+% plot(CO2(:,4)*1000000,1:depth,'--','LineWidth',1);
+% plot(CO2(:,5)*1000000,1:depth,'--','LineWidth',1);
+% plot(CO2(:,6)*1000000,1:depth,'--','LineWidth',1);
+% plot(CO2(:,7)*1000000,1:depth,'--','LineWidth',1);
+% plot(CO2(:,8)*1000000,1:depth,'b-','LineWidth',1);
+plot(CO2(:,9)*1000000,1:depth,'r-','LineWidth',1); hold on;
+plot(CerlingAndQuade(1:130,100,0.05,bestRespirationRate),1:depth,'--','LineWidth',1);
 set(gca,'ydir','reverse');
-%ylim([0.07 0.45]);
-xlabel('pCO_2 (ppm)','FontSize',14);
-ylabel('Depth (cm)','FontSize',14);
-legend('1st day','2nd day','3rd day','4th day','5th day','10th day','15th day','20th day','25th day','Location','Best');
+set(gca,'fontsize',18);
+set(gca, 'FontName', 'Times New Roman');
+% xlim([0 15000]);
+xlabel('CO_2 concentration (ppm)','FontSize',21);
+ylabel('Depth (cm)','FontSize',21);
+set(gca,'XColor','k');
+set(gca,'YColor','k');
+set(gca,'box','off');
+%legend('1st day','2nd day','3rd day','4th day','5th day','10th day','15th day','20th day','25th day','Location','Best');
 
 %% Plotting
 % a=[0 25 50 75 100 150];

@@ -41,14 +41,24 @@ resp_depth_hour_ave = resp_depth_hour_ave/24.4; % Convert to mol-CO2/h
 resp_depth_hour_ave = resp_depth_hour_ave*12; % Convert to g-C/h
 % Used 20 g of dry soil samples
 resp_depth_hour_ave = resp_depth_hour_ave/(20/2.6); % Convert to g-C/cm3-soil/h
-resp_depth_hour_ave = resp_depth_hour_ave*1e6; % Convert to ug-C/g-soil/h
+resp_depth_hour_ave = resp_depth_hour_ave*1e6; % Convert to ug-C/cm3-soil/h
 
 % Doing the same thing for resp_moi_hour
 resp_moi_hour = resp_moi_hour*220*1d-6*1d-3/24.4*12/(20/2.6)*1d6;
 
 %% Plotting
-% figure;
-% plot(time,resp_depth_hour_ave);
-% figure;
+figure;
+plot(time,resp_depth_hour_ave);
 % plot(time,resp_moi_hour);
 incubation3dplot(time, moisture, resp_moi_hour)
+% plot(resp_depth_hour_ave(:,2),depth,'k','LineWidth',1);
+% set(gca,'ydir','reverse');
+% set(gca,'fontsize',22);
+% set(gca,'FontName','Times New Roman');
+% ylabel('Depth (cm)','FontSize',22);
+% ylabel_text = sprintf('Respiration rate (gC/m^3/hour)');
+% xlabel(ylabel_text,'FontSize',22);
+% set(gca,'XColor','k');
+% set(gca,'YColor','k');
+% set(gca,'box','off');
+%legend('Model fitting line',leg,'Location','NorthEast');
