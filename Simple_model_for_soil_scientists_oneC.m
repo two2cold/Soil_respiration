@@ -5,14 +5,14 @@ clear;
 s_fc = 0.6; % soil moisture at field capacity for litter fast
 b = 4.9; % pore size distribution index
 k_d = 4.17E-05; % microbial mortality rate, 1/hour
-k_l = 2.0E-02; % decomposition rate constant of litter pool fast, 1/hour
+k_l = 0.0147; % decomposition rate constant of litter pool fast, 1/hour
 k_s = 5.0E-05; % solubilization rate constant of substrate fast, 1/hour
 r_r = 0.9; % fraction respirated
 r_g = 1-r_r; % fraction growth
 
 %% Initializaion
 %s(1:240) = 0.1; s(241:480) = 0.6; s(481:1200) = 0.1; s(1201:1680) = 0.6; s(1681:1920) = 0.1; % soil moisture
-s(1:200) = 0.66;
+s(1:200) = 0.33;
 t = length(s); % simulation time, hour
 C_l = zeros(1,t); % initializing carbon concentration in litter pool fast
 C_s = zeros(1,t); % initializing carbon concentration in soluble carbon pool fast
@@ -23,10 +23,10 @@ DEC_l = zeros(1,t-1); % initializing microbial respiration rate of fast microbes
 f_d = zeros(1,t-1); % initializing nondimensional factor fast
 
 %% Initial condition
-dimentionless = 1.2;
-C_total = 0.02*1518720; % total carbon concentration, converted from volume fraction to gC/m3H2O
+dimentionless = 1;
+C_total = 0.009*1518720; % total carbon concentration, converted from volume fraction to gC/m3H2O
 C_l(1) = 0.88*C_total; % carbon concentration in litter pool fast, gC/m3
-C_s(1) = dimentionless*0.02*C_total; % carbon concentration in soluble pool fast, gC/m3
+C_s(1) = dimentionless*0.0233*C_total; % carbon concentration in soluble pool fast, gC/m3
 C_b(1) = 0.1*C_total; % carbon concentration in biomass pool fast, gC/m3
 ADD(1:t) = 0; % carbon concentration in external input, gC/m3/day
 
@@ -91,26 +91,26 @@ end
 %% residual sum of squares
 rss = 0;
 for i = 1:7
-    rss = rss + (r_r*DEC_l(round(x_real(i))) - y_real{2}(i))^2;
+    rss = rss + (r_r*DEC_l(round(x_real(i))) - y_real{6}(i))^2;
     aic = 7*log(rss/7) + 2*7;
 end
 disp(aic);
 
 %% Plotting
-plot(x_real,y_real{1},'k^','MarkerSize',8); hold on;
-%plot(x_real,y_real{2},'r^','MarkerSize',8); hold on;
-%plot(1:t-1,r_r*inteDEC,'k--'); hold on;
-%plot(1:t-1,r_r*intereal{1},'b--'); hold on;
-%plot(1:t-1,intereal{1}(1:t-1)./inteDEC(1:t-1),'r--');hold on;
-%plot(1:t-1,inte{1}(1:t-1),'k--');hold on;
-plot(1:t-1,r_r*DEC_l(1:t-1),'r--');hold on;
-%plot(1:t,s);
-%ylim([0 1.2]);
-%set(gca,'fontsize',14);
-%xlabel('Time (hours)','FontSize',14);
-%ylabel('Cumulative CO2 (gC/m3)','FontSize',14);
-%legend('Model output from dormancy model','Model output from first-order model','Real data');
-%title('Simple first-order model','FontSize',22,'FontWeight','bold');
-set(gca,'XColor','k');
-set(gca,'YColor','k');
-set(gca,'box','off');
+% plot(x_real,y_real{1},'k^','MarkerSize',8); hold on;
+% %plot(x_real,y_real{2},'r^','MarkerSize',8); hold on;
+% %plot(1:t-1,r_r*inteDEC,'k--'); hold on;
+% %plot(1:t-1,r_r*intereal{1},'b--'); hold on;
+% %plot(1:t-1,intereal{1}(1:t-1)./inteDEC(1:t-1),'r--');hold on;
+% %plot(1:t-1,inte{1}(1:t-1),'k--');hold on;
+% plot(1:t-1,r_r*DEC_l(1:t-1),'r--');hold on;
+% %plot(1:t,s);
+% %ylim([0 1.2]);
+% %set(gca,'fontsize',14);
+% %xlabel('Time (hours)','FontSize',14);
+% %ylabel('Cumulative CO2 (gC/m3)','FontSize',14);
+% %legend('Model output from dormancy model','Model output from first-order model','Real data');
+% %title('Simple first-order model','FontSize',22,'FontWeight','bold');
+% set(gca,'XColor','k');
+% set(gca,'YColor','k');
+% set(gca,'box','off');

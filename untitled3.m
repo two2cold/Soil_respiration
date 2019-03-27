@@ -41,7 +41,11 @@ plot(t,top_66,'kx','MarkerSize',10);
 plot(t,top_99,'bx','MarkerSize',10);
 
 set(gca,'fontsize',18);
-xlabel('Time (hours)','FontSize',20,'FontWeight','bold');
-ylabel('\delta^{13}C','FontSize',20,'FontWeight','bold');
+set(gca,'FontName','Times New Roman');
+xlabel('Time (hours)','FontSize',20);
+ylabel('\delta^{13}C','FontSize',20);
 legend('33% moisture','66% moisture','100% moisture','Location','best');
-title({'\delta^{13}C in different depths and soil moistures'},'FontSize',22,'FontWeight','bold');
+% title({'\delta^{13}C in different depths and soil moistures'},'FontSize',22,'FontWeight','bold');
+set(gca,'XColor','k');
+set(gca,'YColor','k');
+set(gca,'box','off');

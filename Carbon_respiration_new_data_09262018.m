@@ -34,7 +34,6 @@ s(1:80)=0.66;
 litterFall=0;%litter fall input                                    gC/m3
 
 totC(1:length(s)+1)=0.025*1518720/s(1);%total carbon                    gC/m3 water diluted
-%0.02 for upper, 0.014 for middle, and 0.009 for lower
 % For 0-10 0.025
 % For 0-50 0.02
 % For 10-50 0.017

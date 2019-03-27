@@ -1,8 +1,8 @@
 clear;
 
 %% Parameters
-k_subC1=0.027/24/12;%Empirical factor of solubilization rate, labile                1/hour
-k_subC2=0.004/24/12;%Empirical factor of solubilization rate, recalcitrant                1/hour
+k_subC1=1.22e-4;%Empirical factor of solubilization rate, labile                1/hour
+k_subC2=5.6e-6;%Empirical factor of solubilization rate, recalcitrant                1/hour
 f_s=0.1;%Portion for microbe growth                                   unitless
 f_e=1-f_s;%Portion for microbe respiration                            unitless
 M_B=0.001/24;%Mortality rate of active biomass                        1/hour
@@ -23,14 +23,14 @@ k_RsolC=0.0/24;%Empirical factor of respiration rate of soluble organic carbon
 %% Inputs
 %time_pause=14*24;
 %s(1:240) = 0.1; s(241:480) = 0.6; s(481:1200) = 0.1; s(1201:1680) = 0.6; s(1681:1920) = 0.1; %soil moisture
-s(1:200)=0.66;
+s(1:200)=0.33;
 litterFall=0;%litter fall input                                    gC/m3
 
-totC(1:length(s)+1)=0.02*1518720/s(1);%total carbon                    gC/m3 water diluted
+totC(1:length(s)+1)=0.009*1518720/s(1);%total carbon                    gC/m3 water diluted
 %0.02 for upper, 0.014 for middle, and 0.009 for lower
 subC1=1/4*totC*0.9;%substrate carbon fast              gC/m3 water diluted
 subC2=3/4*totC*0.9;%substrate carbon slow              gC/m3 water diluted
-solC1=1/4*totC*0.025;%soluble carbon fast           gC/m3 water diluted
+solC1=1/4*totC*0.024;%soluble carbon fast           gC/m3 water diluted
 solC2=3/4*totC*0.006;%soluble carbon slow            gC/m3 water diluted
 C_B1=totC*0;%starting active biomass, fast                    gC/m3 water diluted
 C_B2=totC*0;%starting active biomass, slow                    gC/m3 water diluted
@@ -144,13 +144,13 @@ end
 %% residual sum of squares
 rss = 0;
 for i = 1:7
-    rss = rss + (f_e*T_resp(round(x_real(i)))*2.7/1.51872*s(1) - y_real{1}(i))^2;
+    rss = rss + (f_e*T_resp(round(x_real(i)))*2.7/1.51872*s(1) - y_real{6}(i))^2;
     aic = 7*log(rss/7) + 2*18;
 end
 disp(aic);
 
 %% Outputs
-plot(x_real,y_real{1},'r^','MarkerSize',8); hold on;
+plot(x_real,y_real{6},'r^','MarkerSize',8); hold on;
 % for i=1:5
 %     plot(x_test,y_test{i},'^','MarkerSize',8); hold on;
 % end

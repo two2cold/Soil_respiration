@@ -14,9 +14,9 @@ d2=[0.248	0.915	0.981	0.700	0.569	0.491	0.420	0.333];
 d3=[0.173	0.804	1.020	0.837	0.677	0.579	0.499	0.398];
 
 subplot(2,2,1)
-plot(t,a1,'r^','MarkerSize',8); hold on;
-plot(t,a2,'k^','MarkerSize',8);
-plot(t,a3,'b^','MarkerSize',8);
+plot(t,a1,'r-^','MarkerSize',8); hold on;
+plot(t,a2,'k-^','MarkerSize',8);
+plot(t,a3,'b-^','MarkerSize',8);
 set(gca,'fontsize',14);
 ylim([0 10]);
 xlabel('Time (hours)','FontSize',14);
@@ -24,9 +24,9 @@ ylabel('Respiration rate (gC/g-soil/hour)','FontSize',14);
 legend('30% soil moisture','60% soil moisture','100% soil moisture');
 
 subplot(2,2,2)
-plot(t,b1,'r^','MarkerSize',8); hold on;
-plot(t,b2,'k^','MarkerSize',8);
-plot(t,b3,'b^','MarkerSize',8);
+plot(t,b1,'r-^','MarkerSize',8); hold on;
+plot(t,b2,'k-^','MarkerSize',8);
+plot(t,b3,'b-^','MarkerSize',8);
 set(gca,'fontsize',14);
 ylim([0 10]);
 xlabel('Time (hours)','FontSize',14);
@@ -34,9 +34,9 @@ ylabel('Respiration rate (gC/g-soil/hour)','FontSize',14);
 legend('30% soil moisture','60% soil moisture','100% soil moisture');
 
 subplot(2,2,3)
-plot(t,c1,'r^','MarkerSize',8); hold on;
-plot(t,c2,'k^','MarkerSize',8);
-plot(t,c3,'b^','MarkerSize',8);
+plot(t,c1,'r-^','MarkerSize',8); hold on;
+plot(t,c2,'k-^','MarkerSize',8);
+plot(t,c3,'b-^','MarkerSize',8);
 set(gca,'fontsize',14);
 ylim([0 10]);
 xlabel('Time (hours)','FontSize',14);
@@ -44,9 +44,9 @@ ylabel('Respiration rate (gC/g-soil/hour)','FontSize',14);
 legend('30% soil moisture','60% soil moisture','100% soil moisture');
 
 subplot(2,2,4)
-plot(t,d1,'r^','MarkerSize',8); hold on;
-plot(t,d2,'k^','MarkerSize',8);
-plot(t,d3,'b^','MarkerSize',8);
+plot(t,d1,'r-^','MarkerSize',8); hold on;
+plot(t,d2,'k-^','MarkerSize',8);
+plot(t,d3,'b-^','MarkerSize',8);
 set(gca,'fontsize',14);
 ylim([0 10]);
 xlabel('Time (hours)','FontSize',14);

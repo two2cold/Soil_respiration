@@ -11,5 +11,5 @@ function output = CerlingAndQuade(z,z_star,D,R0)
 porosity = 0.4; % Assume a porosity value
 output = R0*z_star^2/(D*porosity)*(1-exp(-z/z_star)); % Output in ug-C/cm3
 % Unit conversion from ug-C/cm3 to ppm
-output = output/12*24.4/1000 + 400; % ppm in soil pores (BC: 400 ppm at the surface)
+output = output/12*24.4*1000 + 400; % ppm in soil pores (BC: 400 ppm at the surface)
 end

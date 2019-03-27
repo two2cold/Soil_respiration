@@ -28,7 +28,7 @@ for i=1:length(raw{1})
 end
 
 %% Plotting 
-for i=5:6
+for i=1:6
     figure;
     plot(data{i}(:,1),data{i}(:,2),'LineWidth',2); hold on;
 %     xlim([50 400]);

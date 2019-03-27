@@ -34,7 +34,7 @@ ylabel Moisture
 %set(gca,'ydir','reverse');
 zlabel('Respiration rate (ug-C/g-soil/h)');
 zlim([-0.5 12]);
-xlim([603 915]);
+%xlim([603 915]);
 %zlim([0 100]);
 set(gca,'fontsize',16);
 set(gca,'FontName','Times New Roman');

@@ -77,7 +77,7 @@ top_1=zeros(1,100);
 mid_1=zeros(1,100);
 bot_1=zeros(1,100);
 for i=1:100
-    top_1(i)=-5.852*(i*0.01)^3+2.917*(i*0.01)^2+4.152*(i*0.01)+0.0755;
+    top_1(i)=-5.855*(i*0.01)^2+7.2*(i*0.01)+0.2;
     mid_1(i)=-1.524*(i*0.01)^3-0.4794*(i*0.01)^2+2.439*(i*0.01)+0.1545;
     bot_1(i)=1.474*(i*0.01)^3-3.783*(i*0.01)^2+2.41*(i*0.01)+0.203;%per g-soil
     
@@ -86,29 +86,49 @@ for i=1:100
     %bot_1(i)=163.8*(i*0.01)^3-420.3*(i*0.01)^2+267.8*(i*0.01)+22.56;%per g-org.C
 end
 
-%% Plotting
-plot([x1,x2],[y1,y2],'x','MarkerSize',10);hold on;
-%plot(x2,y2,'.','MarkerSize',10);
-plot([x7,x8],[y7,y8],'^','MarkerSize',10);
-%plot(x8,y8,'v','MarkerSize',10);
-plot(x9,y9,'+','MarkerSize',10);
-plot([x10,x11,x12,x13,x14],[y10,y11,y12,y13,y14],'d','MarkerSize',10);
-%plot(x11,y11,'<','MarkerSize',10);
-%plot(x12,y12,'>','MarkerSize',10);
-%plot(x13,y13,'s','MarkerSize',10);
-%plot(x14,y14,'p','MarkerSize',10);
-plot([x15,x16],[y15,y16],'v','MarkerSize',10);
+%% Compiled
+compiled_x = [x1,x2,x9,x10,x11,x12,x13,x14,x15,x16,x_axis,x_axis,x_axis];
+compiled_y = [y1,y2,y9,y10,y11,y12,y13,y14,y15,y16,top,mid,bot];
 
-plot(0.01:0.01:1,top_1,'b-','LineWidth',3);hold on;
-plot(0.01:0.01:1,mid_1,'r-','LineWidth',3);
-plot(0.01:0.01:1,bot_1,'k-','LineWidth',3);
-plot(x_axis,top,'b*','MarkerSize',10);
-plot(x_axis,mid,'r*','MarkerSize',10);
-plot(x_axis,bot,'k*','MarkerSize',10);
-set(gca,'fontsize',18);
-set(gca,'ydir','reverse');
-%ylim([0 10]);
-xlabel('Water Holding Capacity (WHC)','FontSize',20,'FontWeight','bold');
-ylabel('Respiration rate (ug CO2-C/g soil/hour)','FontSize',20,'FontWeight','bold');
-legend('Ilstedt et al. 2000','Katterer 1998','Bowden et al. 1998','Franzluebbers 1999','Herbst et al. 2016','Upper depth(0-52cm), org.C=0.021','Mid depth(63-108cm), org.C=0.014','Lower depth(112-165cm), org.C=0.009','Location','SouthOutside');
+% Regression
+regX = 1:100;
+regY = -3.708*(regX/100).^2 + 4.337*(regX/100) - 0.1947; % R-square: 0.2895
+regY_lower_bound = -4.669*(regX/100).^2 + 3.348*(regX/100) - 0.4248;
+regY_upper_bound = -2.747*(regX/100).^2 + 5.326*(regX/100) - 0.03532;
+
+%% Plotting
+% plot([x1,x2],[y1,y2],'x','MarkerSize',10);hold on;
+% % plot(x2,y2,'.','MarkerSize',10);
+% % plot([x3,x4,x5,x6],[y3,y4,y5,y6],'^','MarkerSize',10);
+% % plot(x8,y8,'v','MarkerSize',10);
+% plot(x9,y9,'+','MarkerSize',10);
+% plot([x10,x11,x12,x13,x14],[y10,y11,y12,y13,y14],'d','MarkerSize',10);
+% % plot(x11,y11,'<','MarkerSize',10);
+% % plot(x12,y12,'>','MarkerSize',10);
+% % plot(x13,y13,'s','MarkerSize',10);
+% % plot(x14,y14,'p','MarkerSize',10);
+% plot([x15,x16],[y15,y16],'v','MarkerSize',10);
+% plot(x_axis,top,'b*',x_axis,mid,'b*',x_axis,bot,'b*','MarkerSize',10);
+
+plot(0.01:0.01:1,regY,'b-','LineWidth',3);hold on;
+plot(0.01:0.01:1,regY_lower_bound,'b-','LineWidth',3);
+plot(0.01:0.01:1,regY_upper_bound,'b-','LineWidth',3);
+plot(0.01:0.01:1,regY*2,'k-','LineWidth',3);
+plot(0.01:0.01:1,regY_lower_bound*2,'k-','LineWidth',3);
+plot(0.01:0.01:1,regY_upper_bound*2,'k-','LineWidth',3);
+% plot(0.01:0.01:1,top_1,'b-','LineWidth',3);hold on;
+% plot(0.01:0.01:1,mid_1,'r-','LineWidth',3);
+% plot(0.01:0.01:1,bot_1,'k-','LineWidth',3);
+% plot(x_axis,mid,'r*','MarkerSize',10);
+% plot(x_axis,bot,'k*','MarkerSize',10);
+set(gca,'fontsize',22);
+set(gca,'FontName','Times New Roman');
+%set(gca,'ydir','reverse');
+ylim([0 6]);
+set(gca,'XColor','k');
+set(gca,'YColor','k');
+set(gca,'box','off');
+xlabel('Water Holding Capacity (WHC)','FontSize',22);
+ylabel('Respiration rate (ug CO_2-C/g soil/hour)','FontSize',22);
+legend('Ilstedt et al. 2000','Bowden et al. 1998','Franzluebbers 1999','Herbst et al. 2016','Yuchen et al. 2018','Regression highest respiration');
 title('Respiration rate in different soil moisture','FontSize',22,'FontWeight','bold');

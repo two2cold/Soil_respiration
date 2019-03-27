@@ -2,20 +2,20 @@
 clear;
 
 %% Import data
-fileNumber=80;
+fileNumber=75;
 files=cell(1,fileNumber);
 for n=1:fileNumber
-    filename=sprintf('/Users/yuchenliu/Documents/CrunchTopeDistribute/MultipleRaining/AqRate%d.out',n);
+    filename=sprintf('/Users/yuchenliu/Documents/CrunchTopeDistribute/Multiple_Dry_Wet/AqRate%d.out',n);
     files{n}=importdata(filename,' ',3);
 end
 
 files2=cell(1,fileNumber);
 for n=1:fileNumber
-    filename2=sprintf('/Users/yuchenliu/Documents/CrunchTopeDistribute/MultipleRaining/totcon%d.out',n);
+    filename2=sprintf('/Users/yuchenliu/Documents/CrunchTopeDistribute/Multiple_Dry_Wet/totcon%d.out',n);
     files2{n}=importdata(filename2,' ',3);
 end
 
-t=1:80;
+t=1:fileNumber;
 
 %% Calculation
 %O2=zeros(1,fileNumber);
@@ -23,11 +23,11 @@ CO2=zeros(1,fileNumber);
 acetate=zeros(1,fileNumber);
 for n=1:fileNumber
 %    O2(n)=files{n}.data(1,2);
-    CO2(n)=files{n}.data(1,2)+files{n}.data(1,3)+files{n}.data(1,4);%mol/kgH2O/year
-    acetate(n)=files2{n}.data(1,2)+files2{n}.data(1,3);
+    CO2(n)=files{n}.data(1,2); % +files{n}.data(1,3)+files{n}.data(1,4);%mol/kgH2O/year
+    acetate(n)=files2{n}.data(1,2); % +files2{n}.data(1,3);
 end
 
-Se(1:10) = 0.2; Se(11:20) = 0.6; Se(21:50) = 0.2; Se(51:70) = 0.6; Se(71:80) = 0.2;
+Se(1:34) = 0.6; Se(35:47) = 0.1; Se(48:75) = 0.6; % Se(51:70) = 0.6; Se(71:80) = 0.2;
 
 % Convert from mol/kgW to gC/m3
 acetate=acetate*1000*0.64/0.36.*Se*12/4;

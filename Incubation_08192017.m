@@ -8,6 +8,7 @@ resp_depth = data(2:13,:);
 resp_moi = data(14:20,:);
 depth = [5 15 25 35 45 55 65 75];
 moisture = [10 20 30 40 50 80 90];
+TOCPercentage = [2.8 1.76 1.82 1.64 1.65 1.74 1.71 1.67];
 
 %% Data calculation and rearrangement
 time_used = zeros(1,16);
@@ -41,24 +42,31 @@ resp_depth_hour_ave = resp_depth_hour_ave/24.4; % Convert to mol-CO2/h
 resp_depth_hour_ave = resp_depth_hour_ave*12; % Convert to g-C/h
 % Used 20 g of dry soil samples
 resp_depth_hour_ave = resp_depth_hour_ave/(20/2.6); % Convert to g-C/cm3-soil/h
-resp_depth_hour_ave = resp_depth_hour_ave*1e6; % Convert to ug-C/cm3-soil/h
+resp_depth_hour_ave = resp_depth_hour_ave*1e6; % Convert to g-C/m3-soil/h
 
 % Doing the same thing for resp_moi_hour
 resp_moi_hour = resp_moi_hour*220*1d-6*1d-3/24.4*12/(20/2.6)*1d6;
 
+% Convert to g-C/g-TOC/h
+resp_depth_hour_ave_perTOC = resp_depth_hour_ave/1e6*(20/2.6)/20; % g-C/1g sample/h
+for i=1:8
+    resp_depth_hour_ave_perTOC(i,:) = resp_depth_hour_ave_perTOC(i,:)/TOCPercentage(i)*100;
+end
+
 %% Plotting
 figure;
-plot(time,resp_depth_hour_ave);
+plot(time,resp_depth_hour_ave,'LineWidth',2);
 % plot(time,resp_moi_hour);
-incubation3dplot(time, moisture, resp_moi_hour)
+% incubation3dplot(time, moisture, resp_moi_hour)
 % plot(resp_depth_hour_ave(:,2),depth,'k','LineWidth',1);
 % set(gca,'ydir','reverse');
-% set(gca,'fontsize',22);
-% set(gca,'FontName','Times New Roman');
-% ylabel('Depth (cm)','FontSize',22);
-% ylabel_text = sprintf('Respiration rate (gC/m^3/hour)');
-% xlabel(ylabel_text,'FontSize',22);
-% set(gca,'XColor','k');
-% set(gca,'YColor','k');
-% set(gca,'box','off');
-%legend('Model fitting line',leg,'Location','NorthEast');
+set(gca,'fontsize',18);
+set(gca,'FontName','Times New Roman');
+ylabel_text = sprintf('Respiration rate (gC/g-TOC/hour)');
+ylabel(ylabel_text);
+xlabel('Time (hour)');
+set(gca,'XColor','k');
+set(gca,'YColor','k');
+set(gca,'box','off');
+legend('0-10 cm','10-20 cm','20-30 cm','30-40 cm','40-50 cm','50-60 cm','60-70 cm','70-80 cm','Location','NorthEast');
+% legend('10% WHC','20% WHC','30% WHC','40% WHC','50% WHC','80% WHC','90% WHC','Location','NorthEast');
