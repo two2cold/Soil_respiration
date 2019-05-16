@@ -2,10 +2,10 @@
 clear;
 
 %% Incubation data
-CarbonRespirationFunc(0.027/24/12,0.004/24/12,15000,45000,50,0.66,0.025,0.006,0.02)
+% CarbonRespirationFunc(0.027/24/12,0.004/24/12,15000,45000,50,0.66,0.025,0.006,0.02)
 % BM1 respiration data
 x_real = [1,24,48,72,96,135,186]; % Time [hour]
-y_real = cell(1,7);
+y_real = cell(1,6);
 y_real{1} = [0 6.490 7.314 4.350 3.054 2.076 1.741]; % gC/m3-soil/hour
 y_real{2} = [0 4.193 3.017 2.281 1.916 1.407 1.192];
 y_real{3} = [0 3.017 4.394 2.813 1.661 1.112 1.052];
@@ -26,34 +26,52 @@ y_test{8} = [0,0.946,0.923,0.891,0.857,0.955,0.853,0.516,0.520];
 
 %% Optimization DM
 F = @(p) RSSDM(x_real,y_real{1},p,0.66,0.02) + RSSDM(x_real,y_real{2},p,0.33,0.02);
-x0 = [0.027/24/12,0.004/24/12,15000,45000,0.025,0.006];
-l = [0,0,15000,45000,0,0]; % Lower bound of the parameters
-h = [inf,inf,15000,45000,inf,inf]; % Upper bound of the parameters
-options = optimoptions('fmincon','Display','iter');
-[x, fval, exitflag, output] = fmincon(F,x0,[],[],[],[],l,h,[],options);
-
-% Calculate AIC
 AICDM = zeros(1,6);
-AICDM(1) = length(x_real)*log(RSSDM(x_real,y_real{1},x,0.66,0.02)/length(x_real)) + 2*18;
-AICDM(2) = length(x_real)*log(RSSDM(x_real,y_real{2},x,0.33,0.02)/length(x_real)) + 2*18;
+AICDM(1) = 10e5; % Initialize AICDM to a arbitrarily large number
+AICDM(2) = 10e5; % Initialize AICDM to a arbitrarily large number
+for i=1:1000 % Run 1000 times using random x0
+    x0 = [10^randRange(-10,-2),10^randRange(-10,-2),15000,45000,randRange(0,0.2),randRange(0,0.2)];
+    l = [10e-10,10e-10,15000,45000,0.022,0.005]; % Lower bound of the parameters
+    h = [1,1,15000,45000,0.022,0.005]; % Upper bound of the parameters
+    options = optimoptions('fmincon','Display','none');
+    [x, fval, exitflag, output] = fmincon(F,x0,[],[],[],[],l,h,[],options);
+
+    % Calculate AIC
+    AICDMTemp1 = length(x_real)*log(RSSDM(x_real,y_real{1},x,0.66,0.02)/length(x_real)) + 2*18;
+    AICDMTemp2 = length(x_real)*log(RSSDM(x_real,y_real{2},x,0.33,0.02)/length(x_real)) + 2*18;
+    if AICDMTemp1+AICDMTemp2 < AICDM(1)+AICDM(2)
+        AICDM(1) = AICDMTemp1;
+        AICDM(2) = AICDMTemp2;
+        xFinal = x;
+    end
+end
 AICDM(3) = length(x_real)*log(RSSDM(x_real,y_real{3},x,0.66,0.014)/length(x_real)) + 2*18;
 AICDM(4) = length(x_real)*log(RSSDM(x_real,y_real{4},x,0.33,0.014)/length(x_real)) + 2*18;
 AICDM(5) = length(x_real)*log(RSSDM(x_real,y_real{5},x,0.66,0.009)/length(x_real)) + 2*18;
 AICDM(6) = length(x_real)*log(RSSDM(x_real,y_real{6},x,0.33,0.009)/length(x_real)) + 2*18;
 
 %% Optimization FO
-FirstOrderModelFunc(2e-2,5e-5,0.66,1,0.02,0.02)
+% FirstOrderModelFunc(2e-2,5e-5,0.66,1,0.02,0.02)
 F2 = @(p) RSSFO(x_real(2:end),y_real{1}(2:end),p,0.66,0.02) + RSSFO(x_real(2:end),y_real{2}(2:end),p,0.33,0.02);
-x0_FO = [2e-2,5e-5,0.02];
-l = [0,5e-5,0];
-h = [inf,5e-5,inf];
-options = optimoptions('fmincon','Display','iter');
-[x_FO, fval_FO, exitflag_FO, output_FO] = fmincon(F2,x0_FO,[],[],[],[],l,h,[],options);
-
-% Calculate AIC
 AICFO = zeros(1,6);
-AICFO(1) = length(x_real)*log(RSSFO(x_real,y_real{1},x_FO,0.66,0.02)/length(x_real)) + 2*7;
-AICFO(2) = length(x_real)*log(RSSFO(x_real,y_real{2},x_FO,0.33,0.02)/length(x_real)) + 2*7;
+AICFO(1) = 1e5;
+AICFO(2) = 1e5;
+for i=1:1000
+    x0_FO = [10^randRange(-10,0),5e-5,randRange(0,0.2)];
+    l = [10e-10,5e-5,0.027];
+    h = [1,5e-5,0.027];
+    options = optimoptions('fmincon','Display','none');
+    [x_FO, fval_FO, exitflag_FO, output_FO] = fmincon(F2,x0_FO,[],[],[],[],l,h,[],options);
+
+    % Calculate AIC
+    AICFOTemp1 = length(x_real)*log(RSSFO(x_real,y_real{1},x_FO,0.66,0.02)/length(x_real)) + 2*7;
+    AICFOTemp2 = length(x_real)*log(RSSFO(x_real,y_real{2},x_FO,0.33,0.02)/length(x_real)) + 2*7;
+    if AICFOTemp1+AICFOTemp2 < AICFO(1)+AICFO(2)
+        AICFO(1) = AICFOTemp1;
+        AICFO(2) = AICFOTemp2;
+        x_FOFinal = x_FO;
+    end
+end
 AICFO(3) = length(x_real)*log(RSSFO(x_real,y_real{3},x_FO,0.66,0.014)/length(x_real)) + 2*7;
 AICFO(4) = length(x_real)*log(RSSFO(x_real,y_real{4},x_FO,0.33,0.014)/length(x_real)) + 2*7;
 AICFO(5) = length(x_real)*log(RSSFO(x_real,y_real{5},x_FO,0.66,0.009)/length(x_real)) + 2*7;
@@ -67,12 +85,12 @@ respCurve4 = zeros(1,max(x_real));
 respCurve5 = zeros(1,max(x_real));
 respCurve6 = zeros(1,max(x_real));
 for i = 1:max(x_real)
-    respCurve1(i) = CarbonRespirationFunc(x(1),x(2),x(3),x(4),i,0.66,x(5),x(6),0.02);
-    respCurve2(i) = CarbonRespirationFunc(x(1),x(2),x(3),x(4),i,0.33,x(5),x(6),0.02);
-    respCurve3(i) = CarbonRespirationFunc(x(1),x(2),x(3),x(4),i,0.66,x(5),x(6),0.014);
-    respCurve4(i) = CarbonRespirationFunc(x(1),x(2),x(3),x(4),i,0.33,x(5),x(6),0.014);
-    respCurve5(i) = CarbonRespirationFunc(x(1),x(2),x(3),x(4),i,0.66,x(5),x(6),0.009);
-    respCurve6(i) = CarbonRespirationFunc(x(1),x(2),x(3),x(4),i,0.33,x(5),x(6),0.009);
+    respCurve1(i) = CarbonRespirationFunc(xFinal(1),xFinal(2),xFinal(3),xFinal(4),i,0.66,xFinal(5),xFinal(6),0.02);
+    respCurve2(i) = CarbonRespirationFunc(xFinal(1),xFinal(2),xFinal(3),xFinal(4),i,0.33,xFinal(5),xFinal(6),0.02);
+    respCurve3(i) = CarbonRespirationFunc(xFinal(1),xFinal(2),xFinal(3),xFinal(4),i,0.66,xFinal(5),xFinal(6),0.014);
+    respCurve4(i) = CarbonRespirationFunc(xFinal(1),xFinal(2),xFinal(3),xFinal(4),i,0.33,xFinal(5),xFinal(6),0.014);
+    respCurve5(i) = CarbonRespirationFunc(xFinal(1),xFinal(2),xFinal(3),xFinal(4),i,0.66,xFinal(5),xFinal(6),0.009);
+    respCurve6(i) = CarbonRespirationFunc(xFinal(1),xFinal(2),xFinal(3),xFinal(4),i,0.33,xFinal(5),xFinal(6),0.009);
 end
 plot(1:max(x_real),respCurve1); hold on;
 plot(1:max(x_real),respCurve2);
@@ -96,12 +114,12 @@ respCurveFO4 = zeros(1,max(x_real));
 respCurveFO5 = zeros(1,max(x_real));
 respCurveFO6 = zeros(1,max(x_real));
 for i = 1:max(x_real)
-    respCurveFO1(i) = FirstOrderModelFunc(x_FO(1),x_FO(2),0.66,i,x_FO(3),0.02);
-    respCurveFO2(i) = FirstOrderModelFunc(x_FO(1),x_FO(2),0.33,i,x_FO(3),0.02);
-    respCurveFO3(i) = FirstOrderModelFunc(x_FO(1),x_FO(2),0.66,i,x_FO(3),0.014);
-    respCurveFO4(i) = FirstOrderModelFunc(x_FO(1),x_FO(2),0.33,i,x_FO(3),0.014);
-    respCurveFO5(i) = FirstOrderModelFunc(x_FO(1),x_FO(2),0.66,i,x_FO(3),0.009);
-    respCurveFO6(i) = FirstOrderModelFunc(x_FO(1),x_FO(2),0.33,i,x_FO(3),0.009);
+    respCurveFO1(i) = FirstOrderModelFunc(x_FOFinal(1),x_FOFinal(2),0.66,i,x_FOFinal(3),0.02);
+    respCurveFO2(i) = FirstOrderModelFunc(x_FOFinal(1),x_FOFinal(2),0.33,i,x_FOFinal(3),0.02);
+    respCurveFO3(i) = FirstOrderModelFunc(x_FOFinal(1),x_FOFinal(2),0.66,i,x_FOFinal(3),0.014);
+    respCurveFO4(i) = FirstOrderModelFunc(x_FOFinal(1),x_FOFinal(2),0.33,i,x_FOFinal(3),0.014);
+    respCurveFO5(i) = FirstOrderModelFunc(x_FOFinal(1),x_FOFinal(2),0.66,i,x_FOFinal(3),0.009);
+    respCurveFO6(i) = FirstOrderModelFunc(x_FOFinal(1),x_FOFinal(2),0.33,i,x_FOFinal(3),0.009);
 end
 plot(1:max(x_real),respCurveFO1); hold on;
 plot(1:max(x_real),respCurveFO2);

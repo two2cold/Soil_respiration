@@ -45,13 +45,9 @@ options = optimoptions('fmincon','Display','iter');
 %% Plotting
 respCurve1 = zeros(1,max(time));
 respCurve1O = zeros(1,max(time));
-respCurve2 = zeros(1,max(time));
-respCurve3 = zeros(1,max(time));
 for i = 1:max(time)
     respCurve1(i) = CarbonRespirationFunc(x(1),x(2),x(3),x(4),i,0.66,x(5),x(6),0.025);
     respCurve1O(i) = CarbonRespirationFunc(x0(1),x0(2),x0(3),x0(4),i,0.66,x0(5),x0(6),0.025);
-    respCurve2(i) = CarbonRespirationFunc(x(1),x(2),x(3),x(4),i,0.66,x(5),x(6),0.025);
-    respCurve3(i) = CarbonRespirationFunc(x(1),x(2),x(3),x(4),i,0.66,x(5),x(6),0.025);
 end
 plot(1:max(time),respCurve1); hold on;
 plot(1:max(time),respCurve1O);
